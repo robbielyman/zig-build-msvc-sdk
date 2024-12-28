@@ -1,0 +1,6 @@
+.{
+    .name = "zig-build-msvc-sdk",
+    .version = "0.1.0",
+    .paths = .{ "build.zig.zon", "build.zig", "LICENSE", "xwin.zig" },
+    .dependencies = .{},
+}
