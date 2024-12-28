@@ -3,6 +3,7 @@ const std = @import("std");
 pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
+    _ = optimize; // autofix
 
     const sdk_version = b.option([]const u8, "sdk_version", "which version of the MSVC to install") orelse "10.0.20348";
 
@@ -101,21 +102,7 @@ pub fn build(b: *std.Build) !void {
         },
     );
 
-    const write_libc_file = b.addWriteFile("libc.txt", data);
-    const libc_file = write_libc_file.getDirectory().path(b, "libc.txt");
+    const write_libc_file = b.addNamedWriteFiles("msvc_libc");
+    _ = write_libc_file.add("libc.txt", data);
     for (steps) |step| write_libc_file.step.dependOn(step);
-
-    const lib = b.addStaticLibrary(.{
-        .target = target,
-        .name = "xwin",
-        .optimize = optimize,
-        .root_source_file = b.path("xwin.zig"),
-    });
-
-    if (target.result.abi != .msvc or target.query.isNative()) return;
-
-    lib.step.dependOn(&write_libc_file.step);
-    lib.libc_file = libc_file;
-    lib.linkLibC();
-    b.installArtifact(lib);
 }
