@@ -4,7 +4,7 @@ pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
 
     const xwin_output_directory = b.option([]const u8, "xwin_output_directory", "where the output of xwin is stored") orelse ".xwin";
-    const xwin_out_directory_lazy_path = b.path(xwin_output_directory);
+    const xwin_out_directory_lazy_path: std.Build.LazyPath = .{ .cwd_relative = xwin_output_directory };
     const install_include_dir = b.addInstallDirectory(.{
         .source_dir = xwin_out_directory_lazy_path.path(b, "sdk/include"),
         .install_dir = .{ .custom = "sdk" },
